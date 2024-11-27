@@ -120,11 +120,22 @@ func _on_editor_script_changed(script: Script):
     printerr("Git path is not defined (Editor > Editor Settings... > Plugin > Diff-margin)")
 
   var path = script_editor.get_current_script().get_path().substr(6, -1)
-  var output = []
-  var exit_code = OS.execute(git_path, ["diff", "-U0", path], output)
-  if not git_path.is_empty() and exit_code != 0:
-    printerr("Check the git path (Editor > Editor Settings... > Plugin > Diff-margin)")
-  var diffs_string = [] if output.size() != 1 or output[0].is_empty() else output[0].split("\n").slice(4, -1)
+  var result = []
+
+  # check if file is untracked
+  var exit_code = OS.execute(git_path, ["status", "-s", path], result)
+  if exit_code != 0:
+    if not git_path.is_empty():
+      printerr("Check the git path (Editor > Editor Settings... > Plugin > Diff-margin)")
+    return
+
+  if exit_code == 0 and not result.is_empty() and result[0].substr(0, 2) == "??":
+    _apply_diff(0, _editor.get_line_count(), 0, "")
+    return
+
+  result.clear()
+  exit_code = OS.execute(git_path, ["diff", "-U0", path], result)
+  var diffs_string = [] if result.size() != 1 or result[0].is_empty() else result[0].split("\n").slice(4, -1)
   var removed := false
   var start := -1
   var count := 0
