@@ -52,7 +52,8 @@ func _enter_tree() -> void:
 
   var script_editor := EditorInterface.get_script_editor()
   script_editor.editor_script_changed.connect(_on_editor_script_changed)
-  _on_editor_script_changed(null)
+  script_editor.focus_entered.connect(_on_editor_script_focus_entered)
+  _on_editor_script_changed()
   resource_saved.connect(_on_resource_saved)
 
   _popup_diff = POPUP_DIFF.instantiate()
@@ -97,7 +98,11 @@ func _on_resource_saved(resource: Resource):
     _on_editor_script_changed(resource as Script)
 
 
-func _on_editor_script_changed(script: Script):
+func _on_editor_script_focus_entered():
+  _on_editor_script_changed()
+
+
+func _on_editor_script_changed(_script: Script = null):
   if _gutter_id != -1:
     _editor.gutter_clicked.disconnect(_on_gutter_clicked)
     _editor.remove_gutter(_gutter_id)
@@ -162,13 +167,13 @@ func _apply_diff(start: int, count: int, removed: bool, old_content: String):
   var diff_index := _diffs.size()
   if not old_content.is_empty():
     old_content += "\n"
-  _diffs.append([start, count, old_content])
   var line_count := _editor.get_line_count()
   var is_remove_only := count == 0 and removed
   var is_add_only := count > 0 and not removed
-  var end = start + 2 if is_remove_only else start + count
+  var end := start + 2 if is_remove_only else start + count
   var color := color_add if is_add_only else color_replace
   color = color_delete if is_remove_only else color
+  _diffs.append([start + 1 if is_remove_only else start, count, old_content])
   for line in range(start, end):
     if line >= 0 and line < line_count:
       _editor.set_line_gutter_item_color(line, _gutter_id, color)
