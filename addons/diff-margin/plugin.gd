@@ -30,19 +30,19 @@ func _enter_tree() -> void:
   var editor_settings := EditorInterface.get_editor_settings()
   editor_settings.settings_changed.connect(_on_settings_changed)
   if not editor_settings.has_setting(GIT_PATH):
-    editor_settings.set_settings(GIT_PATH, "")
+    editor_settings.set_setting(GIT_PATH, "")
     editor_settings.set_initial_value(GIT_PATH, "", false)
   if not editor_settings.has_setting(GUTTER_WIDTH):
-    editor_settings.set_settings(GUTTER_WIDTH, 6)
+    editor_settings.set_setting(GUTTER_WIDTH, 6)
     editor_settings.set_initial_value(GUTTER_WIDTH, 6, false)
   if not editor_settings.has_setting(COLOR_DELETE):
-    editor_settings.set_settings(COLOR_DELETE, Color.PALE_VIOLET_RED)
+    editor_settings.set_setting(COLOR_DELETE, Color.PALE_VIOLET_RED)
     editor_settings.set_initial_value(COLOR_DELETE, Color.PALE_VIOLET_RED, false)
   if not editor_settings.has_setting(COLOR_ADD):
-    editor_settings.set_settings(COLOR_ADD, Color.LIGHT_GREEN)
+    editor_settings.set_setting(COLOR_ADD, Color.LIGHT_GREEN)
     editor_settings.set_initial_value(COLOR_ADD, Color.LIGHT_GREEN, false)
   if not editor_settings.has_setting(COLOR_REPLACE):
-    editor_settings.set_settings(COLOR_REPLACE, Color.SKY_BLUE)
+    editor_settings.set_setting(COLOR_REPLACE, Color.SKY_BLUE)
     editor_settings.set_initial_value(COLOR_REPLACE, Color.SKY_BLUE, false)
   git_path = editor_settings.get_setting(GIT_PATH)
   gutter_width = editor_settings.get_setting(GUTTER_WIDTH)
